@@ -7,7 +7,7 @@ Why? _Because you can!_ ¯\\\_(ツ)\_/¯
 
 ## Running (Easy Peasy)
 
-Run the Docker container exposing port `6080`,
+Run the container exposing port `6080`,
 
 ```
 docker run -it -p 6080:6080 dtcooper/tuxracer-web
@@ -18,7 +18,7 @@ play Extreme Tux Racer!
 
 ## Screenshot
 
-![Screenshot](screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/dtcooper/tuxracer-web/master/screenshot.png)
 
 ## Additional Info
 
@@ -27,7 +27,7 @@ play Extreme Tux Racer!
 You shouldn't _need_ to configure this ridiculous piece of software, but if you
 want to it's as easy as setting one of the following environment variables,
 
-* `RESOLUTION` - Resolution, in `<WIDTH>x<HEIGHT>` format, by default `800x600`.
+* `RESOLUTION` - Resolution in `<WIDTH>x<HEIGHT>` format, by default `800x600`.
   - Note the larger this is, the slower the container may run.
 * `PASSWORD` - VNC password, by default there is none.
 * `VERBOSE` - If set to `1`, spew out log information at the terminal.
@@ -46,7 +46,7 @@ docker run -it -p 6080:6080 \
 ### Running a Program In The Container
 
 If you for some reason want a shell or to run a program inside of the container,
-provide it as an argument. For example to shell into `bash`
+provide it as an argument. For example to shell into `bash`,
 
 ```
 docker run -it -p 6080:6080 dtcooper/tuxracer-web bash
@@ -68,9 +68,10 @@ Finally run it,
 docker run -it -p 6080:6080 tuxracer-web
 ```
 
-That's it!
+That's all folks!
 
 ## License
 
-This project is licensed under the MIT License - see the [`LICENSE`](LICENSE)
+This project is licensed under the MIT License - see the
+[`LICENSE`](https://github.com/dtcooper/tuxracer-web/blob/master/LICENSE)
 file for details.
