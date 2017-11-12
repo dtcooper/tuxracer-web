@@ -1,28 +1,42 @@
-# Tux Racer In Your Browser (In a Headless Docker Container)
+# _Wow!_ It's Tux Racer In Your Browser!
 
-Run [Extreme Tux Racer](https://sourceforge.net/projects/extremetuxracer/) in a
-Docker container and play it via a websocket <> VNC bridge in your browser.
+## tl;dr
 
-Why? _Because you can!_ ¯\\\_(ツ)\_/¯
+Run the following in your shell on Linux or macOS,
 
-## Running (Easy Peasy)
-
-Run the container exposing port `6080`,
-
-```
-docker run -it -p 6080:6080 dtcooper/tuxracer-web
+```shell
+docker run -dp 6080:6080 dtcooper/tuxracer-web && sleep 2 && python -m webbrowser http://localhost:6080/
 ```
 
-Then navigate to http://localhost:6080/ in your web browser, et voilà! You can
-play Extreme Tux Racer!
+ZOMG! Holy moly! It's Tux Racer! What great fun! This is dumb! Yes it is! I like
+exclamation marks? Probably! Okay?
+
+## More Info
+
+Wow! Now you can run [Extreme Tux Racer](https://sourceforge.net/projects/extremetuxracer/)
+in a [Docker](https://www.docker.com/) container, playing it in your web browser
+using [noVNC](http://novnc.com/) over a
+[VNC](http://www.karlrunge.com/x11vnc/)-to-[websocket](https://github.com/novnc/websockify)
+bridge.
+
+Why? _Because you can._ ¯\\\_(ツ)\_/¯
+
+## Running - It's Easy Peasy Lemon Squeezy!
+
+Make sure you have [Docker](https://www.docker.com/) installed, then run the
+container exposing port `6080`,
+
+```
+docker run -p 6080:6080 dtcooper/tuxracer-web
+```
+
+Finally, navigate to http://localhost:6080/ in your web browser et voilà!
 
 ## Screenshot
 
 ![Screenshot](https://raw.githubusercontent.com/dtcooper/tuxracer-web/master/screenshot.png)
 
-## Additional Info
-
-### Configuration
+## Configuration
 
 You shouldn't _need_ to configure this ridiculous piece of software, but if you
 want to it's as easy as setting one of the following environment variables,
@@ -33,22 +47,47 @@ want to it's as easy as setting one of the following environment variables,
 * `VERBOSE` - If set to `1`, spew out log information at the terminal.
 
 For example, the following runs at `1024x768` resolution, sets the VNC password
-to `himom`, and prints verbose log information,
+to `shrimp`, and prints verbose log information,
 
-```
-docker run -it -p 6080:6080 \
-        -e RESOLUTION=1024x768 \
-        -e PASSWORD=himom \
-        -e VERBOSE=1 \
-    dtcooper/tuxracer-web
+```shell
+docker run -p 6080:6080 -e RESOLUTION=1024x768 -e PASSWORD=shrimp -e VERBOSE=1 dtcooper/tuxracer-web
 ```
 
-### Running a Program In The Container
+## Sound
 
-If you for some reason want a shell or to run a program inside of the container,
-provide it as an argument. For example to shell into `bash`,
+### Linux
 
+To make sound work on Linux, just expose your `/dev/snd` device while starting
+up the container.
+
+```shell
+docker run -p 6080:6080 --device /dev/snd dtcooper/tuxracer-web
 ```
+
+### macOS (Using PulseAudio)
+
+On macOS, first install [PulseAudio](https://www.freedesktop.org/wiki/Software/PulseAudio/),
+for example here using [Homebrew](https://brew.sh/),
+
+```shell
+brew install pulseaudio
+```
+
+Next, start PulseAudio loading the `native-protocol-tcp` module and share its
+configuration directory. This way the Pulse daemon's "magic cookie" can be
+shared with the container and it can forward sound.
+
+```shell
+pulseaudio --load=module-native-protocol-tcp --exit-idle-time=-1 --start
+docker run -p 6080:6080 -v ~/.config/pulse:/root/.config/pulse dtcooper/tuxracer-web
+```
+
+## Running a Program In The Container
+
+If you for some odd reason want a shell or to run a program inside of the
+container, provide it as an argument. For example to shell into `bash`,
+
+```shell
 docker run -it -p 6080:6080 dtcooper/tuxracer-web bash
 ```
 
@@ -56,22 +95,22 @@ docker run -it -p 6080:6080 dtcooper/tuxracer-web bash
 
 Clone this repo and build the container,
 
-```
+```shell
 git clone https://github.com/dtcooper/tuxracer-web
-cd tuxracer-web
-docker build -t tuxracer-web .
+docker build -t tuxracer-web tuxracer-web
 ```
 
-Finally run it,
+Finally run it locally,
 
-```
-docker run -it -p 6080:6080 tuxracer-web
+```shell
+docker run -p 6080:6080 tuxracer-web
 ```
 
 That's all folks!
 
-## License
+## Author and License
 
-This project is licensed under the MIT License - see the
-[`LICENSE`](https://github.com/dtcooper/tuxracer-web/blob/master/LICENSE)
-file for details.
+This project was created by [David Cooper](http://dtcooper.com/) and is licensed
+under the MIT License. See the
+[`LICENSE`](https://github.com/dtcooper/tuxracer-web/blob/master/LICENSE) file
+for details.

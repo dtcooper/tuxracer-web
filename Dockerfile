@@ -1,8 +1,11 @@
 FROM ubuntu:16.04
 
+# Use serviceable environment variables
 ENV RESOLUTION=800x600
 ENV PASSWORD=
 ENV VERBOSE=
+
+EXPOSE 6080
 
 # Installs:
 #   * extreme tux racer :)
@@ -39,8 +42,6 @@ RUN mkdir -p /opt/noVNC/utils/websockify \
 RUN wget -qO /bin/tini https://github.com/krallin/tini/releases/download/v0.16.1/tini \
     && chmod +x /bin/tini
 
-# Copy over scripts/config
-ADD supervisord.conf /etc/supervisor/conf.d/daemons.conf
 ADD entrypoint.sh /opt/entrypoint.sh
 
 WORKDIR /root
