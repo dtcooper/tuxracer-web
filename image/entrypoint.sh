@@ -31,40 +31,19 @@ if [ ! -e /dev/snd -a -z "$PULSE_SERVER" ]; then
 fi
 
 # Prep supervisord config file
-URL='http://localhost:6080/'
+URL='http://localhost/'
 if [ "$PASSWORD" ]; then
-    EXTRA_VNC_ARGS=" -passwd '$PASSWORD'"
+    export EXTRA_VNC_ARGS=" -passwd '$PASSWORD'"
     URL="$URL?password=$PASSWORD"
+else
+    export EXTRA_VNC_ARGS=
 fi
 
-cat << EOF > /etc/supervisor/conf.d/daemons.conf
-[program:xvfb-etr]
-priority=1
-# Run tux racer and kill this PID when done
-command=sh -c "xvfb-run --auth-file=/root/.Xauthority --server-args='-screen 0 ${RESOLUTION}x24' /usr/games/etr && kill $$"
-autorestart=true
-stdout_logfile=/var/log/xvfb-etr.log
-stderr_logfile=/var/log/xvfb-etr.err
-
-[program:x11vnc]
-priority=2
-command=x11vnc -forever -display :99 -xkb${EXTRA_VNC_ARGS}
-autorestart=true
-stdout_logfile=/var/log/x11vnc.log
-stderr_logfile=/var/log/x11vnc.err
-
-[program:novnc]
-priority=3
-command=/opt/noVNC/utils/launch.sh
-autorestart=true
-stdout_logfile=/var/log/novnc.log
-stderr_logfile=/var/log/novnc.err
-EOF
-
+echo $$ > /var/run/entrypoint.pid
 supervisord -c /etc/supervisor/supervisord.conf
 
 echo
-echo 'Web server running on port 6080:'
+echo 'Web server running on port 80:'
 echo "    - $URL"
 echo
 
@@ -79,8 +58,8 @@ else
             /var/log/xvfb-etr.err \
             /var/log/x11vnc.log \
             /var/log/x11vnc.err \
-            /var/log/novnc.log \
-            /var/log/novnc.err \
+            /var/log/nginx/access.log \
+            /var/log/nginx/error.log \
             /var/log/supervisor/supervisord.log 2>/dev/null
     fi
 fi
