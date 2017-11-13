@@ -11,14 +11,15 @@ if [ ! -e /dev/snd -a -z "$PULSE_SERVER" ]; then
         MAC_IP="$(getent hosts docker.for.mac.localhost)"
         if [ "$MAC_IP" ]; then
             # I see PulseAudio config! Let's set the right environment variable,
-            export PULSE_SERVER="tcp:docker.for.mac.localhost:4713"
+            export PULSE_SERVER='docker.for.mac.localhost'
         else
             echo
-            echo "Your version of Docker doesn't support hostname docker.for.mac.localhost"
-            echo "You can still use audio, but you'll have to set the PULSE_SERVER"
-            echo "environment variable to something like the following:"
+            echo "Your version of Docker doesn't support hostname 'docker.for.mac.localhost'."
+            echo "You can still use audio, but you'll have to set the PULSE_SERVER environment"
+            echo "variable to the host machine's public IP address. Try adding the following to"
+            echo "your 'docker run' command"
             echo
-            echo '    - PULSE_SERVER=tcp:<HOST MACHINE IP ADDR>:4713'
+            echo "    \$ docker run -e PULSE_SERVER=1.2.3.4 <args>"
             echo
             exit 0
         fi
@@ -29,8 +30,7 @@ if [ ! -e /dev/snd -a -z "$PULSE_SERVER" ]; then
 
 fi
 
-# Prep config file
-
+# Prep supervisord config file
 URL='http://localhost:6080/'
 if [ "$PASSWORD" ]; then
     EXTRA_VNC_ARGS=" -passwd '$PASSWORD'"
@@ -40,7 +40,8 @@ fi
 cat << EOF > /etc/supervisor/conf.d/daemons.conf
 [program:xvfb-etr]
 priority=1
-command=xvfb-run --auth-file=/root/.Xauthority --server-args='-screen 0 ${RESOLUTION}x24' /usr/games/etr
+# Run tux racer and kill this PID when done
+command=sh -c "xvfb-run --auth-file=/root/.Xauthority --server-args='-screen 0 ${RESOLUTION}x24' /usr/games/etr && kill $$"
 autorestart=true
 stdout_logfile=/var/log/xvfb-etr.log
 stderr_logfile=/var/log/xvfb-etr.err

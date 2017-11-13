@@ -74,8 +74,8 @@ brew install pulseaudio
 ```
 
 Next, start PulseAudio loading the `native-protocol-tcp` module and share its
-configuration directory. This way the Pulse daemon's "magic cookie" can be
-shared with the container and it can forward sound.
+configuration directory. This way the Pulse daemon's auth cookie can be shared
+with the container and it can forward sound.
 
 ```shell
 pulseaudio --load=module-native-protocol-tcp --exit-idle-time=-1 --start
