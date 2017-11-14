@@ -26,17 +26,27 @@ if [ ! -e /dev/snd -a -z "$PULSE_SERVER" ]; then
     else
         # Start dummy pulseaudio server to avoid error messages
         pulseaudio --start 2> /dev/null
-    fi
 
+        if [ "$ICECAST" ]; then
+            # Start icecast + ices2
+            sed -i 's/^\(autostart.*\)false$/\1true/' /etc/supervisor/conf.d/icecast.conf
+
+            # Include autoplay.js in noVNC
+            sed -i 's/<\/body>/<\/body>\n<script src="autoplay.js"><\/script>\n/' \
+                /var/www/html/vnc.html /var/www/html/vnc_lite.html
+
+            # Set a random icecast password
+            ICECAST_PASSWORD="$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 32)"
+            sed -i "s/hackme/$ICECAST_PASSWORD/" /etc/icecast2/icecast.xml /etc/ices2.xml
+        fi
+    fi
 fi
 
 # Prep supervisord config file
 URL='http://localhost/'
 if [ "$PASSWORD" ]; then
-    export EXTRA_VNC_ARGS=" -passwd '$PASSWORD'"
+    sed -i "s/^\(command.*x11vnc.*\)$/\1 -passwd '$PASSWORD'/" /etc/supervisor/conf.d/etr.conf
     URL="$URL?password=$PASSWORD"
-else
-    export EXTRA_VNC_ARGS=
 fi
 
 echo $$ > /var/run/entrypoint.pid
@@ -58,6 +68,10 @@ else
             /var/log/xvfb-etr.err \
             /var/log/x11vnc.log \
             /var/log/x11vnc.err \
+            /var/log/ices2.log \
+            /var/log/ices2.err \
+            /var/log/icecast2/access.log \
+            /var/log/icecast2/error.log \
             /var/log/nginx/access.log \
             /var/log/nginx/error.log \
             /var/log/supervisor/supervisord.log 2>/dev/null

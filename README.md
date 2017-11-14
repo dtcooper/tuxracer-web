@@ -41,9 +41,12 @@ You shouldn't _need_ to configure this ridiculous piece of software, but if you
 want to it's as easy as setting one of the following environment variables,
 
 * `RESOLUTION` - Resolution in `<WIDTH>x<HEIGHT>` format, by default `800x600`.
-  - Note the larger this is, the slower the container may run.
+    - Note the larger this is, the slower the container may run.
 * `PASSWORD` - VNC password, by default there is none.
 * `VERBOSE` - If set to `1`, spew out log information at the terminal.
+* `ICECAST` - If set to `1`, use experimental [Icecast](http://icecast.org/)
+  sound server. More details below.
+    - Note this suffers from a **massive** delay.
 
 For example, the following runs at `1024x768` resolution, sets the VNC password
 to `shrimp`, and prints verbose log information,
@@ -53,6 +56,17 @@ docker run -p 80:80 -e RESOLUTION=1024x768 -e PASSWORD=shrimp -e VERBOSE=1 dtcoo
 ```
 
 ## Sound
+
+### Out Of The Box (Icecast)
+
+If you want to give the experimental [Icecast](http://icecast.org/) sound
+backend a try, just set the environment variable `ICECAST=1`. It should start
+playing in your browser. Note that this will be **massively delayed** due to
+encoding and buffering by the server, as well as buffering by your browser.
+
+```shell
+docker run -p 80:80 -e ICECAST=1 dtcooper/tuxracer-web
+```
 
 ### Linux
 

@@ -17,9 +17,11 @@ EXPOSE 80
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get -y dist-upgrade \
-    && apt-get install -y --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
         extremetuxracer \
+        icecast2 \
+        ices2 \
         nginx \
         pulseaudio \
         supervisor \
@@ -30,16 +32,15 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install noVNC
-RUN mkdir /tmp/noVNC \
-    && wget -qO - https://github.com/dtcooper/noVNC/archive/master.tar.gz \
+RUN wget -qO - https://github.com/dtcooper/noVNC/archive/master.tar.gz \
         | tar xz --strip-components=1 -C /var/www/html \
-    && cp /var/www/html/vnc_lite.html /var/www/html/index.html
+    && ln -s /var/www/html/vnc_lite.html /var/www/html/index.html
 
 # Better init (CTRL+C works)
-RUN wget -qO /bin/tini https://github.com/krallin/tini/releases/download/v0.16.1/tini \
-    && chmod +x /bin/tini
+RUN wget -qO /sbin/tini https://github.com/krallin/tini/releases/download/v0.16.1/tini \
+    && chmod +x /sbin/tini
 
 ADD image /
 
 WORKDIR /root
-ENTRYPOINT ["/bin/tini", "--", "/entrypoint.sh"]
+ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]
