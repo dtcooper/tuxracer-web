@@ -13,6 +13,7 @@
     </limits>
 
     <authentication>
+        <!-- These passwords get replaced by /entrypoint.sh -->
         <source-password>hackme</source-password>
         <relay-password>hackme</relay-password>
         <admin-user>admin</admin-user>

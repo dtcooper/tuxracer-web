@@ -5,7 +5,9 @@ mkdir -p /dev/input
 ln -s /dev/null /dev/input/js0
 ln -s /dev/null /dev/input/js1
 
-# We're on linux and have a sound file
+START_ICECAST=
+
+# We're on linux and have a sound file or get an external pulse server
 if [ ! -e /dev/snd -a -z "$PULSE_SERVER" ]; then
     if [ -d /root/.config/pulse ]; then
         MAC_IP="$(getent hosts docker.for.mac.localhost)"
@@ -28,15 +30,18 @@ if [ ! -e /dev/snd -a -z "$PULSE_SERVER" ]; then
         pulseaudio --start 2> /dev/null
 
         if [ "$ICECAST" ]; then
-            # Start icecast + ices2
-            sed -i 's/^\(autostart.*\)false$/\1true/' /etc/supervisor/conf.d/icecast.conf
+            START_ICECAST=1
 
             # Include autoplay.js in noVNC
             sed -i 's/<\/body>/<\/body>\n<script src="autoplay.js"><\/script>\n/' \
                 /var/www/html/vnc.html /var/www/html/vnc_lite.html
 
-            # Set a random icecast password
-            ICECAST_PASSWORD="$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 32)"
+            if [ "$PASSWORD" ]; then
+                export ICECAST_PASSWORD="$PASSWORD"
+            else
+                # Set a random icecast password
+                export ICECAST_PASSWORD="$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 32)"
+            fi
             sed -i "s/hackme/$ICECAST_PASSWORD/" /etc/icecast2/icecast.xml /etc/ices2.xml
         fi
     fi
@@ -49,8 +54,13 @@ if [ "$PASSWORD" ]; then
     URL="$URL?password=$PASSWORD"
 fi
 
-echo $$ > /var/run/entrypoint.pid
 supervisord -c /etc/supervisor/supervisord.conf
+
+# Start Icecast services
+if [ "$START_ICECAST" ]; then
+    supervisorctl start icecast 2>&1 >/dev/null
+    supervisorctl start ices2 2>&1 >/dev/null
+fi
 
 echo
 echo 'Web server running on port 80:'

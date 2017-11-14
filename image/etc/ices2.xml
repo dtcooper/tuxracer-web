@@ -13,6 +13,7 @@
         <instance>
             <hostname>127.0.0.1</hostname>
             <port>8000</port>
+            <!-- This password gets replaced by /entrypoint.sh -->
             <password>hackme</password>
             <mount>/audio.ogg</mount>
             <encode>

@@ -5,6 +5,7 @@ LABEL maintainer "David Cooper <david@dtcooper.com>"
 ENV RESOLUTION=800x600
 ENV PASSWORD=
 ENV VERBOSE=
+ENV ICECAST=
 
 EXPOSE 80
 
@@ -32,7 +33,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install noVNC
-RUN wget -qO - https://github.com/dtcooper/noVNC/archive/master.tar.gz \
+RUN wget -qO - https://github.com/noVNC/noVNC/archive/master.tar.gz \
         | tar xz --strip-components=1 -C /var/www/html \
     && ln -s /var/www/html/vnc_lite.html /var/www/html/index.html
 
