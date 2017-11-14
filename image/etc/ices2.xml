@@ -1,7 +1,6 @@
 <ices>
     <background>0</background>
     <loglevel>4</loglevel>
-    <!-- logfile is ignored if this is set to 1 -->
     <consolelog>1</consolelog>
     <stream>
         <input>
@@ -15,7 +14,7 @@
             <hostname>127.0.0.1</hostname>
             <port>8000</port>
             <password>hackme</password>
-            <mount>/pulse.ogg</mount>
+            <mount>/audio.ogg</mount>
             <encode>
                 <quality>0</quality>
                 <samplerate>22050</samplerate>
@@ -23,6 +22,5 @@
             </encode>
             <downmix>1</downmix>
         </instance>
-
     </stream>
 </ices>
