@@ -91,7 +91,7 @@ configuration directory. This way the Pulse daemon's auth cookie can be shared
 with the container and it can forward sound.
 
 ```shell
-pulseaudio --load=module-native-protocol-tcp --exit-idle-time=-1 --start
+pulseaudio --load=module-native-protocol-tcp --exit-idle-time=-1 --daemon
 docker run -p 80:80 -v ~/.config/pulse:/root/.config/pulse dtcooper/tuxracer-web
 ```
 
