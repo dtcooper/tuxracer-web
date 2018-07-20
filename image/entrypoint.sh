@@ -27,7 +27,11 @@ if [ ! -e /dev/snd -a -z "$PULSE_SERVER" ]; then
         fi
     else
         # Start dummy pulseaudio server to avoid error messages
-        pulseaudio --start 2> /dev/null
+        pulseaudio -n -v \
+            --load=module-native-protocol-unix \
+            --load=module-always-sink \
+            --log-target=file:/var/log/pulseaudio.log \
+            --start
 
         if [ "$ICECAST" ]; then
             START_ICECAST=1
@@ -84,6 +88,7 @@ else
             /var/log/icecast2/error.log \
             /var/log/nginx/access.log \
             /var/log/nginx/error.log \
+            /var/log/pulseaudio.log \
             /var/log/supervisor/supervisord.log 2>/dev/null
     fi
 fi

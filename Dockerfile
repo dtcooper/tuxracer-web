@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 LABEL maintainer "David Cooper <david@dtcooper.com>"
 
 # Use serviceable environment variables
@@ -38,7 +38,7 @@ RUN wget -qO - https://github.com/noVNC/noVNC/archive/master.tar.gz \
     && ln -s /var/www/html/vnc_lite.html /var/www/html/index.html
 
 # Better init (CTRL+C works)
-RUN wget -qO /sbin/tini https://github.com/krallin/tini/releases/download/v0.16.1/tini \
+RUN wget -qO /sbin/tini https://github.com/krallin/tini/releases/download/v0.18.0/tini \
     && chmod +x /sbin/tini
 
 ADD image /
