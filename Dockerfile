@@ -33,7 +33,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install noVNC
-RUN wget -qO - https://github.com/noVNC/noVNC/archive/master.tar.gz \
+RUN wget -qO - https://github.com/novnc/noVNC/archive/v1.1.0.tar.gz \
         | tar xz --strip-components=1 -C /var/www/html \
     && ln -s /var/www/html/vnc_lite.html /var/www/html/index.html
 
